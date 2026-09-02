@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahir Ahmad - Portfolio</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="brand">Tahir Ahmad</a>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <div class="container hero-grid">
+                <div class="hero-identity">
+                    <p class="hero-kicker">Master Computer Science &middot; Universitas Indonesia</p>
+                    <h1>Tahir Ahmad</h1>
+                </div>
+
+                <div class="hero-photo">
+                    <div class="photo-block"></div>
+                    <img class="avatar" src="{% static 'img/profile.jpg' %}" alt="Photo of Tahir Ahmad">
+                </div>
+
+                <div class="hero-details">
+                    <p class="bio">I'm a Computer Science Master's student from Germany, spending this semester at Universitas Indonesia as an exchange student. Back home I worked as a tutor at my university and still give private lessons on the side. In my free time I play squash and train at the gym &mdash; and here in Indonesia I've started learning guitar.</p>
+
+                    <dl class="meta-list">
+                        <div class="meta-row">
+                            <dt>NPM</dt>
+                            <dd>2606816466</dd>
+                        </div>
+                        <div class="meta-row">
+                            <dt>Program</dt>
+                            <dd>Master Computer Science</dd>
+                        </div>
+                    </dl>
+
+                    <div class="social-links" id="contact">
+                        <a class="social-link" href="https://github.com/indo747">GitHub</a>
+                        <a class="social-link" href="https://www.linkedin.com/in/tahir02">LinkedIn</a>
+                        <a class="social-link" href="mailto:609indo@gmail.com">Email</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">&copy; 2026 Tahir Ahmad</div>
+    </footer>
+</body>
+</html>
