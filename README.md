@@ -24,7 +24,7 @@ The page is then available at http://localhost:8000/.
 
 * **Tutorial 0**: Git repository, virtual environment and Django project setup.
 * **Tutorial 1**: Renamed the project package to `portofolio`, added the `landing_page`
-  view, URL routing, template and static file configuration, and the "About Me" hero
+  view, URL routing, template and static file configuration plus the "About Me" hero
   section in HTML5 and CSS3.
 * **Assignment 1**: Added Experience, Skills and Education sections to the same page,
   each with its own CSS rules (timeline layout, responsive skill grid, hover states).
@@ -45,7 +45,7 @@ tahir.ahmad.
 
 ### Assignment 1
 
-1. **Did you use semantic HTML5 elements, and how did they help?**
+1. **Did you use semantic HTML5 elements and how did they help?**
 
    Yes. The page is split into four `section` elements (about, experience, skills,
    education) and each one has an id that the `nav` links to, so the navigation needs no
@@ -56,10 +56,10 @@ tahir.ahmad.
    labels with values and not a list. Around all of that sit `header`, `main` and
    `footer`. What this gave me in practice was less markup and clearer CSS, since a
    selector like `.timeline .entry` describes the real structure of the page instead of
-   a chain of nameless `div` elements, and the anchor navigation came for free from the
+   a chain of nameless `div` elements. The anchor navigation came for free from the
    section ids. It also means a screen reader can announce the parts of the page rather
    than reading it as one long block. I did not use `aside`, because that element is
-   meant for content that sits beside the main topic, and on a page this short nothing
+   meant for content that sits beside the main topic. On a page this short nothing
    is really secondary. Every section is part of the same statement about who I am, so
    adding an `aside` just to have used the tag would have been the wrong markup for what
    the content actually is.
@@ -72,7 +72,7 @@ tahir.ahmad.
    redefines the areas as a single column and reorders them to identity, then photo,
    then details. That reordering was the real decision, because if the areas were simply
    stacked in source order the long bio paragraph would push the photo far down the
-   page, and the name and the face are what identify the page, so they belong first with
+   page. The name and the face are what identify the page, so they belong first with
    the supporting text after them. For the skills I avoided a second breakpoint
    completely by using `repeat(auto-fit, minmax(240px, 1fr))`, which lets the browser fit
    as many 240px columns as there is room for and gives three columns on desktop and one
@@ -82,20 +82,20 @@ tahir.ahmad.
    photo needed a max width on mobile as well, because at the full container width it
    filled most of the screen before any text became visible. The rule I used for all of
    these was to ask what a visitor needs to see first on a small screen: identity before
-   detail, and anything that is only decoration, like the offset colour block behind the
+   detail. Anything that is only decoration, like the offset colour block behind the
    photo, is allowed to shrink.
 
-3. **What are the limits of a purely static page, and what would you add next?**
+3. **What are the limits of a purely static page and what would you add next?**
 
    Everything is written directly into the template, so adding one job or one skill means
-   editing HTML and making a commit. That does not scale, and it also means a content
+   editing HTML and making a commit. That does not scale. It also means a content
    change looks exactly like a code change in the git history. Nothing can be filtered or
-   sorted, every visitor gets the identical page, and nobody can leave anything behind,
+   sorted, every visitor gets the identical page and nobody can leave anything behind,
    since the only way to contact me is a mailto link that only works if the visitor has a
    mail client set up. The next thing I would want is to move the content into Django
-   models, one for experience entries, one for skills and one for projects, and let the
+   models, one for experience entries, one for skills and one for projects, then let the
    view pass them to the template as querysets. The page would then be generated from
-   data, the admin interface would become the tool I edit it with, and adding an entry
+   data, the admin interface would become the tool I edit it with and adding an entry
    would no longer require a deployment. After that a contact form, because it is the
    piece a portfolio actually needs and it requires exactly the request handling and
    storage that a static page cannot give you.
