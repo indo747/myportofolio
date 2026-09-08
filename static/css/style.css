@@ -193,3 +193,123 @@ h1, .brand {
         justify-content: flex-start;
     }
 }
+
+.panel {
+    padding: 4rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.panel-alt {
+    background-color: #f3ece1;
+}
+
+.section-title {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    margin-bottom: 2rem;
+}
+
+/* the line is drawn on the container, the dots sit on each entry */
+.timeline {
+    border-left: 2px solid var(--line);
+    padding-left: 1.75rem;
+}
+
+.entry {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.entry:last-child {
+    padding-bottom: 0;
+}
+
+.entry::before {
+    content: "";
+    position: absolute;
+    left: calc(-1.75rem - 7px);
+    top: 0.55rem;
+    width: 12px;
+    height: 12px;
+    background-color: var(--paper);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+}
+
+.entry h3 {
+    font-size: 1.1rem;
+}
+
+.entry-org {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.entry-text {
+    color: var(--text-muted);
+    max-width: 560px;
+}
+
+.skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    list-style: none;
+}
+
+.skill {
+    background-color: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.skill:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.skill-name {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.skill-note {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .site-header .container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* five nav items no longer fit on one line at this width */
+    .site-header nav {
+        gap: 1.1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .panel {
+        padding: 3rem 0;
+    }
+
+    .timeline {
+        padding-left: 1.25rem;
+    }
+
+    .entry::before {
+        left: calc(-1.25rem - 7px);
+    }
+}
