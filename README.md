@@ -100,4 +100,9 @@ tahir.ahmad.
    piece a portfolio actually needs and it requires exactly the request handling and
    storage that a static page cannot give you.
 
-Did not use AI
+## Use of AI
+
+The reflective answers in this README were rewritten with AI support so they are easier
+to read. I asked for simpler wording instead of the vocabulary I picked up in my master's
+programme, since this is a bachelor level course. The design decisions described in the
+answers are my own.
