@@ -4,19 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tahir Ahmad - Portfolio</title>
+    <title>{{ name }} - Portfolio</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="/" class="brand">Tahir Ahmad</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
             <nav>
-                <a href="#about">About</a>
-                <a href="#experience">Experience</a>
-                <a href="#skills">Skills</a>
-                <a href="#education">Education</a>
-                <a href="#contact">Contact</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_main' %}#skills">Skills</a>
+                <a href="{% url 'main:show_main' %}#education">Education</a>
+                <a href="{% url 'main:show_main' %}#contact">Contact</a>
             </nav>
         </div>
     </header>
@@ -25,26 +25,26 @@
         <section class="hero" id="about">
             <div class="container hero-grid">
                 <div class="hero-identity">
-                    <p class="hero-kicker">Master Computer Science &middot; Universitas Indonesia</p>
-                    <h1>Tahir Ahmad</h1>
+                    <p class="hero-kicker">{{ study_program }} &middot; Universitas Indonesia</p>
+                    <h1>{{ name }}</h1>
                 </div>
 
                 <div class="hero-photo">
                     <div class="photo-block"></div>
-                    <img class="avatar" src="{% static 'img/profile.jpg' %}" alt="Photo of Tahir Ahmad">
+                    <img class="avatar" src="{% static 'img/profile.jpg' %}" alt="Photo of {{ name }}">
                 </div>
 
                 <div class="hero-details">
-                    <p class="bio">I'm a Computer Science Master's student from Germany, spending this semester at Universitas Indonesia as an exchange student. Back home I work as an IT consultant, taught as a tutor at my university, and still give private lessons on the side. In my free time I play squash, train at the gym, and here in Indonesia I've started learning guitar.</p>
+                    <p class="bio">{{ bio }}</p>
 
                     <dl class="meta-list">
                         <div class="meta-row">
                             <dt>NPM</dt>
-                            <dd>2606816466</dd>
+                            <dd>{{ npm }}</dd>
                         </div>
                         <div class="meta-row">
                             <dt>Program</dt>
-                            <dd>Master Computer Science</dd>
+                            <dd>{{ study_program }}</dd>
                         </div>
                     </dl>
 
@@ -53,37 +53,6 @@
                         <a class="social-link" href="https://www.linkedin.com/in/tahir02">LinkedIn</a>
                         <a class="social-link" href="mailto:609indo@gmail.com">Email</a>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel" id="experience">
-            <div class="container">
-                <h2 class="section-title">Experience</h2>
-                <div class="timeline">
-                    <article class="entry">
-                        <h3>IT Consultant</h3>
-                        <p class="entry-org">Okalis GmbH</p>
-                        <p class="entry-text">Consulting work alongside my studies, which is where most of what I know about real projects comes from rather than from coursework.</p>
-                    </article>
-
-                    <article class="entry">
-                        <h3>Course Tutor</h3>
-                        <p class="entry-org">Goethe University Frankfurt</p>
-                        <p class="entry-text">Ran tutorial groups for programming, algorithms and digital systems courses, correcting exercise sheets and explaining the material to smaller groups.</p>
-                    </article>
-
-                    <article class="entry">
-                        <h3>Learning Centre Tutor</h3>
-                        <p class="entry-org">Goethe University Frankfurt</p>
-                        <p class="entry-text">Later moved to the learning centre, where students come in with questions from any module, so I had to be able to switch topics on the spot.</p>
-                    </article>
-
-                    <article class="entry">
-                        <h3>Private Tutoring</h3>
-                        <p class="entry-org">Freelance, ongoing</p>
-                        <p class="entry-text">Still teaching privately on the side. Explaining something until it actually lands is a different skill from knowing it yourself.</p>
-                    </article>
                 </div>
             </div>
         </section>
@@ -147,7 +116,7 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">&copy; 2026 Tahir Ahmad</div>
+        <div class="container">&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</div>
     </footer>
 </body>
 </html>
