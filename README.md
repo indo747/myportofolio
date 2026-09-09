@@ -28,6 +28,10 @@ The page is then available at http://localhost:8000/.
   section in HTML5 and CSS3.
 * **Assignment 1**: Added Experience, Skills and Education sections to the same page,
   each with its own CSS rules (timeline layout, responsive skill grid, hover states).
+* **Tutorial 2**: Created the `main` application and the `Experience` model, moved the
+  profile data out of the template into a view context and added a separate experience
+  page at `/experience/` that renders model data. Routing goes through `main/urls.py`
+  and six unit tests cover both pages and the model.
 
 ## Deployment (PWS) not completed
 
