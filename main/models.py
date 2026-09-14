@@ -31,3 +31,34 @@ class Experience(models.Model):
     @property
     def is_ongoing(self):
         return self.ended_at is None
+
+
+class Education(models.Model):
+    LEVEL_CHOICES = [
+        ("bachelor", "Bachelor"),
+        ("master", "Master"),
+        ("exchange", "Exchange Semester"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    degree = models.CharField(max_length=255)
+    institution = models.CharField(max_length=255)
+    level = models.CharField(
+        max_length=20,
+        choices=LEVEL_CHOICES,
+        default="bachelor",
+    )
+    description = models.TextField(blank=True)
+    started_at = models.DateField()
+    ended_at = models.DateField(blank=True, null=True)
+
+    class Meta:
+        # neueste Ausbildung zuerst, sonst muesste jede View selbst sortieren
+        ordering = ["-started_at"]
+
+    def __str__(self):
+        return f"{self.degree}, {self.institution}"
+
+    @property
+    def is_current(self):
+        return self.ended_at is None
