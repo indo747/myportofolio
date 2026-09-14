@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education - {{ name }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
+            <nav>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_education' %}">Education</a>
+                <a href="{% url 'main:show_main' %}#skills">Skills</a>
+                <a href="{% url 'main:show_main' %}#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="education-section" id="education">
+            <div class="container">
+                <p class="section-kicker">Where I studied</p>
+                <h1>Education</h1>
+                <div class="education-grid">
+                    {% for education in education_list %}
+                        <article class="education-card">
+                            <span class="education-level">
+                                {{ education.get_level_display }}
+                            </span>
+                            <h2>{{ education.degree }}</h2>
+                            <p class="education-institution">{{ education.institution }}</p>
+                            <p class="education-period">
+                                {{ education.started_at|date:"Y" }}
+                                {% if education.is_current %}
+                                    to present
+                                {% else %}
+                                    to {{ education.ended_at|date:"Y" }}
+                                {% endif %}
+                            </p>
+                            {% if education.description %}
+                                <p class="education-description">{{ education.description }}</p>
+                            {% endif %}
+                        </article>
+                    {% empty %}
+                        <p class="empty-state">
+                            No education has been added yet.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</div>
+    </footer>
+</body>
+</html>
