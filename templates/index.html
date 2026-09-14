@@ -14,8 +14,8 @@
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_education' %}">Education</a>
                 <a href="{% url 'main:show_main' %}#skills">Skills</a>
-                <a href="{% url 'main:show_main' %}#education">Education</a>
                 <a href="{% url 'main:show_main' %}#contact">Contact</a>
             </nav>
         </div>
@@ -89,30 +89,6 @@
             </div>
         </section>
 
-        <section class="panel" id="education">
-            <div class="container">
-                <h2 class="section-title">Education</h2>
-                <div class="timeline">
-                    <article class="entry">
-                        <h3>MSc Computer Science</h3>
-                        <p class="entry-org">TU Darmstadt</p>
-                        <p class="entry-text">Currently enrolled.</p>
-                    </article>
-
-                    <article class="entry">
-                        <h3>Exchange Semester</h3>
-                        <p class="entry-org">Universitas Indonesia</p>
-                        <p class="entry-text">Odd semester 2026/2027, including this Platform-Based Programming course.</p>
-                    </article>
-
-                    <article class="entry">
-                        <h3>BSc Computer Science</h3>
-                        <p class="entry-org">Goethe University Frankfurt</p>
-                        <p class="entry-text">Thesis combined FEM simulation with trained neural networks, which is also where I did most of my Python work.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="site-footer">
