@@ -40,6 +40,9 @@
                             {% if education.description %}
                                 <p class="education-description">{{ education.description }}</p>
                             {% endif %}
+                            <div class="education-card-actions">
+                                {% include "components/education_delete_modal.html" with education=education %}
+                            </div>
                         </article>
                     {% empty %}
                         {% if degree_query %}

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from main.forms import EducationForm
 from main.models import Education, Experience
@@ -71,3 +71,14 @@ def create_education(request):
         "form": form,
     }
     return render(request, "education_form.html", context)
+
+
+def delete_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    # only POST deletes, so following a plain link can never remove anything
+    if request.method == "POST":
+        education.delete()
+        messages.success(request, "Education entry deleted.")
+
+    return redirect("main:show_education")

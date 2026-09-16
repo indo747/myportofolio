@@ -35,6 +35,11 @@ The page is then available at http://localhost:8000/.
 * **Assignment 2**: Added the `Education` model with its own page at `/education/`, so
   the education section is no longer hard-coded in the template either. Seven further
   unit tests cover the page, its empty state, the ordering and the navbar link.
+* **Tutorial 3**: Moved the shared header, navigation and footer into `base.html` so every
+  page extends it. Education entries can now be added through a Django `ModelForm` at
+  `/education/add/` and deleted through a confirmation dialog. The same data is also
+  available as JSON at `/api/education/`, which the education page reads from and which
+  supports searching by degree with `?degree=`.
 
 ## Deployment (PWS) not completed
 
