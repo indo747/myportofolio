@@ -470,7 +470,37 @@ h1, .brand {
     line-height: 1;
 }
 
+.education-search {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.education-search__input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+}
+
+.education-search__input:focus {
+    outline: 2px solid var(--accent);
+    border-color: var(--accent);
+}
+
 @media (max-width: 600px) {
+    .education-search {
+        flex-direction: column;
+    }
+
+    .education-search .button {
+        width: 100%;
+    }
+
     .education-header {
         align-items: flex-start;
         flex-direction: column;

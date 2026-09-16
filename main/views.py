@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from main.forms import EducationForm
@@ -30,11 +32,30 @@ def show_experience(request):
 
 
 def show_education(request):
+    # the page reads from the same JSON endpoint as external clients, so the search filter lives in one place
+    json_response = get_education_json(request)
+
+    entries = serializers.deserialize("json", json_response.content.decode("utf-8"))
+    entries = [entry.object for entry in entries]
+    degree_query = request.GET.get("degree", "").strip()
+
     context = {
         "name": "Tahir Ahmad",
-        "education_list": Education.objects.all(),
+        "education_list": entries,
+        "degree_query": degree_query,
     }
     return render(request, "education.html", context)
+
+
+def get_education_json(request):
+    degree_query = request.GET.get("degree", "").strip()
+    education = Education.objects.all()
+
+    if degree_query:
+        education = education.filter(degree__icontains=degree_query)
+
+    education_json = serializers.serialize("json", education)
+    return HttpResponse(education_json, content_type="application/json")
 
 
 def create_education(request):

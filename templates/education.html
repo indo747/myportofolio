@@ -16,6 +16,11 @@
                         Add Education
                     </a>
                 </div>
+                <form method="get" action="{% url 'main:show_education' %}" class="education-search">
+                    <input type="search" name="degree" value="{{ degree_query }}" placeholder="Search by degree" class="education-search__input" aria-label="Search by degree">
+                    <button type="submit" class="button">Search</button>
+                </form>
+
                 <div class="education-grid">
                     {% for education in education_list %}
                         <article class="education-card">
@@ -37,9 +42,13 @@
                             {% endif %}
                         </article>
                     {% empty %}
-                        <p class="empty-state">
-                            No education has been added yet.
-                        </p>
+                        {% if degree_query %}
+                            <p class="empty-state">No education matches that search.</p>
+                        {% else %}
+                            <p class="empty-state">
+                                No education has been added yet.
+                            </p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
