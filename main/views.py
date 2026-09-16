@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect, render
 
+from main.forms import EducationForm
 from main.models import Education, Experience
 
 
@@ -33,3 +35,18 @@ def show_education(request):
         "education_list": Education.objects.all(),
     }
     return render(request, "education.html", context)
+
+
+def create_education(request):
+    form = EducationForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "New education entry added.")
+        return redirect("main:show_education")
+
+    context = {
+        "name": "Tahir Ahmad",
+        "form": form,
+    }
+    return render(request, "education_form.html", context)
