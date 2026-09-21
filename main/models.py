@@ -53,7 +53,7 @@ class Education(models.Model):
     ended_at = models.DateField(blank=True, null=True)
 
     class Meta:
-        # neueste Ausbildung zuerst, sonst muesste jede View selbst sortieren
+        # newest first, otherwise every view would have to sort for itself
         ordering = ["-started_at"]
 
     def __str__(self):
