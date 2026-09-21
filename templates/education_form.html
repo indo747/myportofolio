@@ -9,7 +9,7 @@
         <section class="education-section">
             <div class="container">
                 <h1>Add Education</h1>
-                <form method="post" action="{% url 'main:create_education' %}" class="education-form">
+                <form method="post" action="{% url 'main:create_education' %}" class="entry-form">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group">

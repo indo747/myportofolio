@@ -9,15 +9,15 @@
         <section class="education-section" id="education">
             <div class="container">
                 <p class="section-kicker">Where I studied</p>
-                <div class="education-header">
+                <div class="section-header">
                     <h1>Education</h1>
-                    <a href="{% url 'main:create_education' %}" class="button education-add-button">
+                    <a href="{% url 'main:create_education' %}" class="button add-button">
                         <span aria-hidden="true">+</span>
                         Add Education
                     </a>
                 </div>
-                <form method="get" action="{% url 'main:show_education' %}" class="education-search">
-                    <input type="search" name="degree" value="{{ degree_query }}" placeholder="Search by degree" class="education-search__input" aria-label="Search by degree">
+                <form method="get" action="{% url 'main:show_education' %}" class="section-search">
+                    <input type="search" name="degree" value="{{ degree_query }}" placeholder="Search by degree" class="section-search__input" aria-label="Search by degree">
                     <button type="submit" class="button">Search</button>
                 </form>
 
@@ -40,8 +40,9 @@
                             {% if education.description %}
                                 <p class="education-description">{{ education.description }}</p>
                             {% endif %}
-                            <div class="education-card-actions">
-                                {% include "components/education_delete_modal.html" with education=education %}
+                            <div class="card-actions">
+                                {% url 'main:delete_education' education.id as delete_url %}
+                                {% include "components/delete_modal.html" with modal_id=education.id modal_title=education.degree modal_subtitle=education.institution delete_url=delete_url %}
                             </div>
                         </article>
                     {% empty %}
