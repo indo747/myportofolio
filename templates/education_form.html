@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
 {% block meta %}
-    <title>Add Education - {{ name }}</title>
+    <title>{{ heading }} - {{ name }}</title>
 {% endblock meta %}
 
 {% block content %}
     <main>
         <section class="education-section">
             <div class="container">
-                <h1>Add Education</h1>
-                <form method="post" action="{% url 'main:create_education' %}" class="entry-form">
+                <h1>{{ heading }}</h1>
+                {# no action attribute, so the same template posts back to add or edit, whichever URL it was opened from #}
+                <form method="post" class="entry-form">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-group">
@@ -20,7 +21,7 @@
                             {% endfor %}
                         </div>
                     {% endfor %}
-                    <button type="submit" class="button">Add Education</button>
+                    <button type="submit" class="button">{{ submit_label }}</button>
                     <a href="{% url 'main:show_education' %}" class="button button-secondary">Cancel</a>
                 </form>
             </div>
