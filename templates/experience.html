@@ -9,7 +9,13 @@
         <section class="experience-section" id="experience">
             <div class="container">
                 <p class="section-kicker">My journey so far</p>
-                <h1>Experience</h1>
+                <div class="section-header">
+                    <h1>Experience</h1>
+                    <a href="{% url 'main:create_experience' %}" class="button add-button">
+                        <span aria-hidden="true">+</span>
+                        Add Experience
+                    </a>
+                </div>
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
@@ -25,6 +31,9 @@
                             {% else %}
                                 <p class="experience-status">Completed</p>
                             {% endif %}
+                            <div class="card-actions">
+                                <a href="{% url 'main:update_experience' experience.id %}" class="button button-secondary">Edit</a>
+                            </div>
                         </article>
                     {% empty %}
                         <p class="empty-state">

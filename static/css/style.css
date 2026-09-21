@@ -505,6 +505,9 @@ h1, .brand {
 
 /* pushes the delete button to the bottom so cards of different length line up */
 .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-top: auto;
     padding-top: 1rem;
 }

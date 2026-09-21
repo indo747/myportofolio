@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from main.forms import EducationForm
+from main.forms import EducationForm, ExperienceForm
 from main.models import Education, Experience
 
 
@@ -82,3 +82,39 @@ def delete_education(request, education_id):
         messages.success(request, "Education entry deleted.")
 
     return redirect("main:show_education")
+
+
+def create_experience(request):
+    form = ExperienceForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "New experience entry added.")
+        return redirect("main:show_experience")
+
+    context = {
+        "name": "Tahir Ahmad",
+        "form": form,
+        "heading": "Add Experience",
+        "submit_label": "Add Experience",
+    }
+    return render(request, "experience_form.html", context)
+
+
+def update_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+    # instance= turns the same form class into an edit form, prefilled and saving back onto that row
+    form = ExperienceForm(request.POST or None, instance=experience)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Experience entry updated.")
+        return redirect("main:show_experience")
+
+    context = {
+        "name": "Tahir Ahmad",
+        "form": form,
+        "heading": "Edit Experience",
+        "submit_label": "Save changes",
+    }
+    return render(request, "experience_form.html", context)
