@@ -24,11 +24,30 @@ def show_main(request):
 
 
 def show_experience(request):
+    # same idea as the education page, the view reads its data through the JSON endpoint
+    json_response = get_experience_json(request)
+
+    entries = serializers.deserialize("json", json_response.content.decode("utf-8"))
+    entries = [entry.object for entry in entries]
+    title_query = request.GET.get("title", "").strip()
+
     context = {
         "name": "Tahir Ahmad",
-        "experience_list": Experience.objects.all(),
+        "experience_list": entries,
+        "title_query": title_query,
     }
     return render(request, "experience.html", context)
+
+
+def get_experience_json(request):
+    title_query = request.GET.get("title", "").strip()
+    experience = Experience.objects.all()
+
+    if title_query:
+        experience = experience.filter(title__icontains=title_query)
+
+    experience_json = serializers.serialize("json", experience)
+    return HttpResponse(experience_json, content_type="application/json")
 
 
 def show_education(request):
@@ -118,3 +137,13 @@ def update_experience(request, experience_id):
         "submit_label": "Save changes",
     }
     return render(request, "experience_form.html", context)
+
+
+def delete_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+
+    if request.method == "POST":
+        experience.delete()
+        messages.success(request, "Experience entry deleted.")
+
+    return redirect("main:show_experience")

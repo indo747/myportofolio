@@ -16,6 +16,11 @@
                         Add Experience
                     </a>
                 </div>
+                <form method="get" action="{% url 'main:show_experience' %}" class="section-search">
+                    <input type="search" name="title" value="{{ title_query }}" placeholder="Search by role" class="section-search__input" aria-label="Search by role">
+                    <button type="submit" class="button">Search</button>
+                </form>
+
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
@@ -33,12 +38,18 @@
                             {% endif %}
                             <div class="card-actions">
                                 <a href="{% url 'main:update_experience' experience.id %}" class="button button-secondary">Edit</a>
+                                {% url 'main:delete_experience' experience.id as delete_url %}
+                                {% include "components/delete_modal.html" with modal_id=experience.id modal_title=experience.title delete_url=delete_url %}
                             </div>
                         </article>
                     {% empty %}
-                        <p class="empty-state">
-                            No experience has been added yet.
-                        </p>
+                        {% if title_query %}
+                            <p class="empty-state">No experience matches that search.</p>
+                        {% else %}
+                            <p class="empty-state">
+                                No experience has been added yet.
+                            </p>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
