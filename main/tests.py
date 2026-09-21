@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.test import TestCase
 from django.urls import reverse
@@ -108,3 +109,110 @@ class EducationTest(TestCase):
     def test_navbar_links_to_education(self):
         response = self.client.get(reverse("main:show_main"))
         self.assertContains(response, f'href="{reverse("main:show_education")}"')
+
+
+class ExperienceCrudTest(TestCase):
+    def setUp(self):
+        self.experience = Experience.objects.create(
+            title="PBP Teaching Assistant",
+            description="Help students understand web development.",
+            category="part-time",
+        )
+        self.valid_data = {
+            "title": "Student Assistant",
+            "description": "Ran tutorial groups.",
+            "category": "part-time",
+            "thumbnail": "",
+            "ended_at": "",
+        }
+
+    def test_create_form_is_accessible(self):
+        response = self.client.get(reverse("main:create_experience"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "experience_form.html")
+        self.assertContains(response, "csrfmiddlewaretoken")
+
+    def test_create_experience(self):
+        response = self.client.post(reverse("main:create_experience"), self.valid_data)
+        self.assertRedirects(response, reverse("main:show_experience"))
+        self.assertTrue(Experience.objects.filter(title="Student Assistant").exists())
+
+    def test_create_rejects_missing_title(self):
+        response = self.client.post(reverse("main:create_experience"), {**self.valid_data, "title": ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "form-error")
+        self.assertEqual(Experience.objects.count(), 1)
+
+    def test_update_form_is_prefilled(self):
+        response = self.client.get(reverse("main:update_experience", args=[self.experience.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'value="{self.experience.title}"')
+
+    def test_update_experience(self):
+        response = self.client.post(
+            reverse("main:update_experience", args=[self.experience.id]),
+            {**self.valid_data, "title": "Head Teaching Assistant", "ended_at": "2025-06-30T12:00"},
+        )
+        self.assertRedirects(response, reverse("main:show_experience"))
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Head Teaching Assistant")
+        self.assertFalse(self.experience.is_ongoing)
+
+    def test_delete_needs_post(self):
+        url = reverse("main:delete_experience", args=[self.experience.id])
+        self.client.get(url)
+        self.assertTrue(Experience.objects.filter(pk=self.experience.pk).exists())
+        self.client.post(url)
+        self.assertFalse(Experience.objects.filter(pk=self.experience.pk).exists())
+
+    def test_experience_json(self):
+        response = self.client.get(reverse("main:get_experience_json"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        data = json.loads(response.content)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["fields"]["title"], self.experience.title)
+
+    def test_experience_json_filters_by_title(self):
+        Experience.objects.create(title="Working Student", description="x", category="research")
+        response = self.client.get(reverse("main:get_experience_json"), {"title": "teaching"})
+        titles = [entry["fields"]["title"] for entry in json.loads(response.content)]
+        self.assertEqual(titles, [self.experience.title])
+
+    def test_search_without_result_says_so(self):
+        response = self.client.get(reverse("main:show_experience"), {"title": "nothing here"})
+        self.assertContains(response, "No experience matches that search.")
+        self.assertNotContains(response, self.experience.title)
+
+
+class EducationUpdateTest(TestCase):
+    def setUp(self):
+        self.education = Education.objects.create(
+            degree="MSc Computer Science",
+            institution="TU Darmstadt",
+            level="master",
+            started_at=datetime.date(2026, 4, 1),
+        )
+
+    def test_update_form_is_prefilled(self):
+        response = self.client.get(reverse("main:update_education", args=[self.education.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education_form.html")
+        self.assertContains(response, 'value="MSc Computer Science"')
+        self.assertContains(response, "Edit Education")
+
+    def test_update_education(self):
+        response = self.client.post(
+            reverse("main:update_education", args=[self.education.id]),
+            {
+                "degree": "MSc Data Science",
+                "institution": "TU Darmstadt",
+                "level": "master",
+                "description": "",
+                "started_at": "2026-04-01",
+                "ended_at": "",
+            },
+        )
+        self.assertRedirects(response, reverse("main:show_education"))
+        self.education.refresh_from_db()
+        self.assertEqual(self.education.degree, "MSc Data Science")

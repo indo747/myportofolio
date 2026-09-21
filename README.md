@@ -40,6 +40,11 @@ The page is then available at http://localhost:8000/.
   `/education/add/` and deleted through a confirmation dialog. The same data is also
   available as JSON at `/api/education/`, which the education page reads from and which
   supports searching by degree with `?degree=`.
+* **Assignment 3**: Pulled the delete dialog and the form styling out into shared
+  components, so both sections use the same building blocks. Experience entries can now be
+  created, edited, deleted and read as JSON at `/api/experience/`, with a search by role.
+  Education gained the edit form it was still missing. Eleven further unit tests cover the
+  forms, both JSON endpoints and the delete behaviour.
 
 ## Deployment (PWS) not completed
 
@@ -168,6 +173,63 @@ tahir.ahmad.
    `makemigrations` to record the new column and `migrate` to actually add it, because
    otherwise the model and the database would disagree and any query touching that field
    would fail.
+
+### Assignment 3
+
+1. **Why use Django's ModelForm instead of writing the HTML form by hand? And why is `{% csrf_token %}` required?**
+
+   A `ModelForm` is built from the model, so the fields, their types and their validation
+   rules all come from one place. Writing the same form by hand means repeating every field
+   name in the template, repeating every rule in the view and keeping both in sync every
+   time the model changes. With `ModelForm` I list the fields once in `Meta` and Django
+   renders a suitable input for each type, validates the submitted values, collects the
+   error messages and writes them onto a model instance with `form.save()`. The same class
+   also does the editing, because passing `instance=` prefills it and saves back onto that
+   row, which is why Add Experience and Edit Experience share a single template in this
+   project. My `ExperienceForm` deliberately leaves out `id` and `started_at`, since both
+   are filled in by the model itself and should never be typed in by hand.
+
+   `{% csrf_token %}` protects against cross site request forgery. Without it, somebody
+   could put a hidden form on their own page that posts to my delete URL. My browser would
+   send that request along with my session, so the entry would be deleted without me ever
+   agreeing to it. Django writes a secret token into every form and keeps the matching
+   value in a cookie, then compares the two on each POST. A foreign page cannot read the
+   token, so its request is rejected with 403. That is also why only the POST forms need it
+   while the search form does not, because that one uses GET and only reads data.
+
+2. **Why is JSON preferred over XML in modern web development?**
+
+   JSON is lighter and it is closer to the structures programs already work with. The same
+   content carries far less markup, because a value appears as `"title": "IT Consultant"`
+   instead of being wrapped in an opening and a closing tag, which adds up quickly when a
+   page requests data repeatedly. It also maps directly onto the data types that every
+   language already has, namely objects, arrays, strings, numbers and booleans, so parsing
+   hands back a usable structure immediately. In the browser it needs no extra library at
+   all, since `JSON.parse` turns a response straight into an object, whereas XML has to be
+   walked through the DOM node by node to get at the values. XML still has its place where
+   documents need schemas, namespaces or markup mixed into running text, but a web API
+   mostly moves records back and forth. For that the simpler format won.
+
+3. **What happens when a view returns portfolio data as JSON? And why is serialization needed?**
+
+   When someone opens `/api/experience/`, the request goes through `portofolio/urls.py` to
+   `main/urls.py`, which matches the path to `get_experience_json`. The view reads the
+   optional `title` parameter from `request.GET`, asks the database for
+   `Experience.objects.all()` and narrows that with `filter(title__icontains=...)` when a
+   search term was given. At this point the result is a QuerySet of `Experience` objects,
+   which are Python objects living in memory. `serializers.serialize("json", experience)`
+   walks them, converts every field into something JSON can represent and returns a string,
+   which the view wraps in an `HttpResponse` with `content_type="application/json"` so the
+   client knows how to read it.
+
+   Serialization is necessary because a model instance is a Python object with methods, a
+   database connection behind it and field values such as `UUID` or `datetime` that JSON
+   has no concept of. HTTP can only carry bytes, so the object has to be flattened into
+   text first. Django's serializer also records the model name and the primary key next to
+   the fields, which is what makes the opposite direction work: both the experience and the
+   education page call `deserialize` on exactly this JSON and get real model instances
+   back, so the templates can still use things like `get_category_display` and
+   `is_ongoing`.
 
 ## Use of AI
 
