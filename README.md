@@ -15,8 +15,13 @@ python3 -m venv env
 source env/bin/activate        # Windows: env\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py createsuperuser
 python manage.py runserver
 ```
+
+The superuser is the portfolio owner. Only that account may add, edit or delete entries.
+Any other account created through `/register/` can read everything and star experience
+entries.
 
 The page is then available at http://localhost:8000/.
 
@@ -45,6 +50,12 @@ The page is then available at http://localhost:8000/.
   created, edited, deleted and read as JSON at `/api/experience/`, with a search by role.
   Education gained the edit form it was still missing. Eleven further unit tests cover the
   forms, both JSON endpoints and the delete behaviour.
+* **Tutorial 4**: Added registration, login and logout on top of Django's built in user
+  system, with the signed in account shown in the navbar. The time of the last sign in is
+  kept in a `last_login` cookie, shown on the profile page and removed again on logout.
+  Changing portfolio data now requires being signed in as the owner, while any signed in
+  account can star an experience entry. Fifteen further unit tests cover the sign in flow,
+  the permissions and the star button.
 
 ## Deployment (PWS) not completed
 
