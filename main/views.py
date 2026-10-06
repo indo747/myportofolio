@@ -12,6 +12,17 @@ from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import EducationForm, ExperienceForm
 from main.models import Education, Experience
 
+EDITOR_GROUP = "Editor"
+
+
+def is_editor(user):
+    return user.is_authenticated and user.groups.filter(name=EDITOR_GROUP).exists()
+
+
+def may_edit(user):
+    # the owner may do everything, an editor may only change what already exists
+    return user.is_superuser or is_editor(user)
+
 
 def show_main(request):
     last_login = request.COOKIES.get("last_login", "No active login session / Cookie not found")
@@ -43,6 +54,7 @@ def show_experience(request):
         "name": "Tahir Ahmad",
         "experience_list": entries,
         "title_query": title_query,
+        "can_edit": may_edit(request.user),
     }
     return render(request, "experience.html", context)
 
@@ -71,6 +83,7 @@ def show_education(request):
         "name": "Tahir Ahmad",
         "education_list": entries,
         "degree_query": degree_query,
+        "can_edit": may_edit(request.user),
     }
     return render(request, "education.html", context)
 
@@ -109,7 +122,7 @@ def create_education(request):
 
 @login_required(login_url="/login/")
 def update_education(request, education_id):
-    if not request.user.is_superuser:
+    if not may_edit(request.user):
         raise PermissionDenied
 
     education = get_object_or_404(Education, pk=education_id)
@@ -167,7 +180,7 @@ def create_experience(request):
 
 @login_required(login_url="/login/")
 def update_experience(request, experience_id):
-    if not request.user.is_superuser:
+    if not may_edit(request.user):
         raise PermissionDenied
 
     experience = get_object_or_404(Experience, pk=experience_id)
