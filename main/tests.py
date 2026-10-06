@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -347,3 +347,84 @@ class StarTest(TestCase):
         response = self.client.get(reverse("main:get_experience_json"))
         starred = json.loads(response.content)[0]["fields"]["starred_by"]
         self.assertEqual(starred, [["visitor"]])
+
+
+class EditorRoleTest(TestCase):
+    def setUp(self):
+        self.owner = User.objects.create_superuser(username="owner", password="owner-pass-2026")
+        self.editor = User.objects.create_user(username="editor", password="editor-pass-2026")
+        self.editor.groups.add(Group.objects.get(name="Editor"))
+        self.visitor = User.objects.create_user(username="visitor", password="visitor-pass-2026")
+        self.experience = Experience.objects.create(
+            title="PBP Teaching Assistant", description="x", category="part-time"
+        )
+        self.education = Education.objects.create(
+            degree="MSc Computer Science",
+            institution="TU Darmstadt",
+            level="master",
+            started_at=datetime.date(2026, 4, 1),
+        )
+
+    def test_group_exists_after_migration(self):
+        self.assertTrue(Group.objects.filter(name="Editor").exists())
+
+    def test_editor_may_update(self):
+        self.client.force_login(self.editor)
+        url = reverse("main:update_experience", args=[self.experience.id])
+        self.assertEqual(self.client.get(url).status_code, 200)
+
+        response = self.client.post(url, {
+            "title": "Head Teaching Assistant",
+            "description": "x",
+            "category": "part-time",
+            "thumbnail": "",
+            "ended_at": "",
+        })
+        self.assertRedirects(response, reverse("main:show_experience"))
+        self.experience.refresh_from_db()
+        self.assertEqual(self.experience.title, "Head Teaching Assistant")
+
+    def test_editor_may_not_create_or_delete(self):
+        self.client.force_login(self.editor)
+        self.assertEqual(self.client.get(reverse("main:create_experience")).status_code, 403)
+        self.assertEqual(
+            self.client.post(reverse("main:delete_experience", args=[self.experience.id])).status_code,
+            403,
+        )
+        self.assertTrue(Experience.objects.filter(pk=self.experience.pk).exists())
+
+    def test_editor_role_also_covers_education(self):
+        self.client.force_login(self.editor)
+        self.assertEqual(
+            self.client.get(reverse("main:update_education", args=[self.education.id])).status_code,
+            200,
+        )
+        self.assertEqual(self.client.get(reverse("main:create_education")).status_code, 403)
+
+    def test_regular_user_may_not_update(self):
+        self.client.force_login(self.visitor)
+        self.assertEqual(
+            self.client.get(reverse("main:update_experience", args=[self.experience.id])).status_code,
+            403,
+        )
+
+    def test_editor_sees_edit_but_not_add_or_delete(self):
+        self.client.force_login(self.editor)
+        response = self.client.get(reverse("main:show_experience"))
+        self.assertContains(response, reverse("main:update_experience", args=[self.experience.id]))
+        self.assertNotContains(response, reverse("main:create_experience"))
+        self.assertNotContains(response, reverse("main:delete_experience", args=[self.experience.id]))
+
+    def test_owner_sees_every_control(self):
+        self.client.force_login(self.owner)
+        response = self.client.get(reverse("main:show_experience"))
+        self.assertContains(response, reverse("main:create_experience"))
+        self.assertContains(response, reverse("main:update_experience", args=[self.experience.id]))
+        self.assertContains(response, reverse("main:delete_experience", args=[self.experience.id]))
+
+    def test_regular_user_sees_no_write_controls_but_can_star(self):
+        self.client.force_login(self.visitor)
+        response = self.client.get(reverse("main:show_experience"))
+        self.assertNotContains(response, reverse("main:create_experience"))
+        self.assertNotContains(response, reverse("main:update_experience", args=[self.experience.id]))
+        self.assertContains(response, reverse("main:toggle_star", args=[self.experience.id]))
