@@ -6,8 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import PermissionDenied
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from main.forms import EducationForm, ExperienceForm
 from main.models import Education, Experience
@@ -43,32 +44,43 @@ def show_main(request):
 
 
 def show_experience(request):
-    # same idea as the education page, the view reads its data through the JSON endpoint
-    json_response = get_experience_json(request)
-
-    entries = serializers.deserialize("json", json_response.content.decode("utf-8"))
-    entries = [entry.object for entry in entries]
+    # the page only ships the skeleton now, the entries arrive through the JSON endpoint
     title_query = request.GET.get("title", "").strip()
 
     context = {
         "name": "Tahir Ahmad",
-        "experience_list": entries,
         "title_query": title_query,
         "can_edit": may_edit(request.user),
+        "form": ExperienceForm(),
     }
     return render(request, "experience.html", context)
 
 
 def get_experience_json(request):
     title_query = request.GET.get("title", "").strip()
-    experience = Experience.objects.all()
+    experience = Experience.objects.prefetch_related("starred_by").all()
 
     if title_query:
         experience = experience.filter(title__icontains=title_query)
 
-    # natural keys print usernames instead of raw database ids
-    experience_json = serializers.serialize("json", experience, use_natural_foreign_keys=True)
-    return HttpResponse(experience_json, content_type="application/json")
+    # built by hand because the built in serializer cannot tell who is signed in
+    data = []
+    for entry in experience:
+        starred_users = entry.starred_by.all()
+        data.append({
+            "pk": str(entry.id),
+            "fields": {
+                "title": entry.title,
+                "description": entry.description,
+                "category": entry.get_category_display(),
+                "is_ongoing": entry.is_ongoing,
+                "star_count": starred_users.count(),
+                "is_starred": request.user in starred_users if request.user.is_authenticated else False,
+                "starred_by_names": ", ".join(user.username for user in starred_users),
+            },
+        })
+
+    return JsonResponse(data, safe=False)
 
 
 def show_education(request):
@@ -267,3 +279,24 @@ def toggle_star(request, experience_id):
             experience.starred_by.add(request.user)
 
     return redirect("main:show_experience")
+
+
+@require_POST
+def create_experience_ajax(request):
+    # no @login_required here on purpose: it answers with a redirect to the login page,
+    # and fetch would follow that and read the login HTML as a success
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Only the portfolio owner can add entries."},
+            status=403,
+        )
+
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message": "Experience added successfully.", "pk": str(experience.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
