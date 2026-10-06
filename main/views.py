@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -10,8 +12,10 @@ from main.models import Education, Experience
 
 
 def show_main(request):
+    last_login = request.COOKIES.get("last_login", "No active login session / Cookie not found")
     context = {
         "name": "Tahir Ahmad",
+        "last_login": last_login,
         "npm": "2606816466",
         "study_program": "Master Computer Science",
         "bio": (
@@ -192,7 +196,10 @@ def login_user(request):
 
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("main:show_main")
+        response = redirect("main:show_main")
+        # the session already identifies the user, this cookie only shows them when they last signed in
+        response.set_cookie("last_login", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        return response
 
     context = {
         "name": "Tahir Ahmad",
@@ -203,4 +210,6 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect("main:show_main")
+    response = redirect("main:show_main")
+    response.delete_cookie("last_login")
+    return response
