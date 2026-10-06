@@ -7,6 +7,9 @@ from main.views import (
     delete_experience,
     get_education_json,
     get_experience_json,
+    login_user,
+    logout_user,
+    register,
     show_education,
     show_experience,
     show_main,
@@ -28,4 +31,7 @@ urlpatterns = [
     path("education/<uuid:education_id>/delete/", delete_education, name="delete_education"),
     path("api/experience/", get_experience_json, name="get_experience_json"),
     path("api/education/", get_education_json, name="get_education_json"),
+    path("register/", register, name="register"),
+    path("login/", login_user, name="login"),
+    path("logout/", logout_user, name="logout"),
 ]

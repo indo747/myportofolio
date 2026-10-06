@@ -620,3 +620,22 @@ h1, .brand {
         justify-content: center;
     }
 }
+
+.nav-user {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.form-help {
+    margin-top: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.form-message {
+    margin-bottom: 1rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+}
