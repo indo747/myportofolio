@@ -40,8 +40,10 @@
                             {% endif %}
                             <div class="card-actions">
                                 {% include "components/experience_star.html" with experience=experience %}
-                                {% if user.is_superuser %}
+                                {% if can_edit %}
                                 <a href="{% url 'main:update_experience' experience.id %}" class="button button-secondary">Edit</a>
+                                {% endif %}
+                                {% if user.is_superuser %}
                                 {% url 'main:delete_experience' experience.id as delete_url %}
                                 {% include "components/delete_modal.html" with modal_id=experience.id modal_title=experience.title delete_url=delete_url %}
                                 {% endif %}
