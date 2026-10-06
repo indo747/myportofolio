@@ -13,6 +13,7 @@ from main.views import (
     show_education,
     show_experience,
     show_main,
+    toggle_star,
     update_education,
     update_experience,
 )
@@ -25,6 +26,7 @@ urlpatterns = [
     path("experience/add/", create_experience, name="create_experience"),
     path("experience/<uuid:experience_id>/edit/", update_experience, name="update_experience"),
     path("experience/<uuid:experience_id>/delete/", delete_experience, name="delete_experience"),
+    path("experience/<uuid:experience_id>/star/", toggle_star, name="toggle_star"),
     path("education/", show_education, name="show_education"),
     path("education/add/", create_education, name="create_education"),
     path("education/<uuid:education_id>/edit/", update_education, name="update_education"),

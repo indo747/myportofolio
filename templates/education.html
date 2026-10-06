@@ -11,10 +11,12 @@
                 <p class="section-kicker">Where I studied</p>
                 <div class="section-header">
                     <h1>Education</h1>
+                    {% if user.is_superuser %}
                     <a href="{% url 'main:create_education' %}" class="button add-button">
                         <span aria-hidden="true">+</span>
                         Add Education
                     </a>
+                    {% endif %}
                 </div>
                 <form method="get" action="{% url 'main:show_education' %}" class="section-search">
                     <input type="search" name="degree" value="{{ degree_query }}" placeholder="Search by degree" class="section-search__input" aria-label="Search by degree">
@@ -41,9 +43,11 @@
                                 <p class="education-description">{{ education.description }}</p>
                             {% endif %}
                             <div class="card-actions">
+                                {% if user.is_superuser %}
                                 <a href="{% url 'main:update_education' education.id %}" class="button button-secondary">Edit</a>
                                 {% url 'main:delete_education' education.id as delete_url %}
                                 {% include "components/delete_modal.html" with modal_id=education.id modal_title=education.degree modal_subtitle=education.institution delete_url=delete_url %}
+                                {% endif %}
                             </div>
                         </article>
                     {% empty %}
