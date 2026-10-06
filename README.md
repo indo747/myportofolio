@@ -35,6 +35,8 @@ entry. The `Editor` group is created by migration `0004_editor_group`, so it is 
 there after `migrate`. To make somebody an editor, open `/admin/`, sign in as the superuser,
 pick the account under Users and add the group `Editor` to it.
 
+The experience page is rendered by JavaScript, so the roles reach it as the constants
+`IS_SUPERUSER` and `CAN_EDIT` and decide which buttons get drawn. That is cosmetic only.
 Every rule is enforced in the view itself. Visitors who are not signed in are sent to the
 login page, signed in accounts without the right role get a 403. Hiding a button in a
 template only removes it from sight, so the checks in `main/views.py` are what actually
@@ -77,6 +79,13 @@ The page is then available at http://localhost:8000/.
   create or delete them. The role is a Django group called `Editor`, created by a migration
   so it exists on every machine, with members assigned through the admin. Eight further unit
   tests cover what each of the four roles may do and which controls they get to see.
+* **Tutorial 5**: Rebuilt the experience page on JavaScript. Django now serves only the
+  page skeleton, the entries arrive from `/api/experience/` through `fetch` and the cards
+  are assembled in the browser. The search reacts while typing, debounced by 300ms so one
+  request goes out instead of one per keystroke. New entries are added through a modal
+  form that saves with AJAX and reports back through a toast, without any page reload.
+  Because the browser now builds the HTML, Django's automatic escaping no longer applies,
+  so values are escaped in JavaScript and incoming text is stripped of tags in the form.
 
 ## Deployment (PWS) not completed
 
